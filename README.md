@@ -16,7 +16,8 @@ Steps :
 ```cd HelloWorld
 mkdir MYBUILD && cd MYBUILD
 cmake ..
-cmake --build .```
+cmake --build .
+```
 
 
 ### Simple App ###
