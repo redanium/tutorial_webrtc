@@ -1,8 +1,8 @@
 # tutorial_webrtc
 
-#---------------------#
-#---- Hello World ----#
-#---------------------#
+#/////////////////////#
+#//// Hello World ////#
+#/////////////////////#
 # This example is to show the basics of CMake
 # and how to compile a C++ file
 # project ()
@@ -16,10 +16,9 @@ cmake ..
 cmake --build .
 
 
-
-#---------------------#
-#----- Simple App ----#
-#---------------------#
+#/////////////////////#
+#///// Simple App ////#
+#/////////////////////#
 # This example is to show the basics of CMake
 # project ()
 # add_executable ()
