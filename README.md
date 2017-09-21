@@ -1,7 +1,7 @@
 # tutorial_webrtc
 
 
-### Hello World ###
+### CMake Tutorial ###
 
 This example is to show the basics of CMake and how to compile a C++ file
 We introduce these concepts
@@ -13,14 +13,14 @@ We introduce these concepts
 
 Steps :
 
-```cd HelloWorld
-mkdir MYBUILD && cd MYBUILD
+```cd CMakeTutorial
+cd MYBUILD
 cmake ..
 cmake --build .
 ```
 
 
-### Simple App ###
+### WebRTC simple app ###
 
 This example is to show the basics of CMake
 We introduce these concepts
@@ -32,13 +32,13 @@ We introduce these concepts
 
 ```
 cd SimpleApp
-mkdir MYBUILD && cd MYBUILD
+cd MYBUILD
 cmake -G "Visual Studio 14 2015 Win64" ..
 cmake --build .
 ```
 
 
-### Qt Hello World ###
+### Qt5 App ###
 
 This example is to show the basics of Qt5
 We introduce these concepts
@@ -50,9 +50,9 @@ We introduce these concepts
 
 ```
 cd QtHelloWorld
-mkdir MYBUILD && cd MYBUILD
-cmake -DQt5_DIR=Path_to_Qt5 -G "NMake Makefiles" ..
-nmake
+cd MYBUILD
+cmake -DQt5_DIR=Path_to_Qt5 -G "Visual Studio 14 2015 Win64" ..
+cmake --build .
 ```
 
 
