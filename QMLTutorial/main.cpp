@@ -2,12 +2,11 @@
 #include <QQmlApplicationEngine>
 
 int main(int argc, char** argv){
-	//Main application
-	QGuiApplication app(argc, argv);
-
+  // Main application
+  QGuiApplication app(argc, argv);
 
   QQmlApplicationEngine engine;
-  engine.load(QUrl(QStringLiteral("qrc:HelloWorld.qml")));
+  engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 
   return app.exec();
 }
