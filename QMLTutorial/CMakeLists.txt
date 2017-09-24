@@ -11,6 +11,7 @@ set( CMAKE_AUTORCC ON )
 
 add_executable( QMLApp 
   main.cpp
+  qml.qrc
   )
 
 
