@@ -1,5 +1,6 @@
 # tutorial_webrtc
 
+## JanusQtApp code will be update by the end of the week ##
 
 ### CMake Tutorial ###
 
