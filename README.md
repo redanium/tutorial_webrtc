@@ -51,6 +51,7 @@ We introduce these concepts
 cd QtHelloWorld
 cd MYBUILD
 cmake -DQt5_DIR=Path_to_Qt5 -G "Visual Studio 14 2015 Win64" ..
+  //For exemple, for Windows : -DQt5_DIR=C:\Qt\5.9.2\msvc2015_64\lib\cmake\Qt5
 cmake --build .
 ```
 
