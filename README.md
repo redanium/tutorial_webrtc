@@ -45,8 +45,7 @@ We introduce these concepts
 
 * QApplication object
 * find_package(Qt5 COMPONENTS Widgets)
-* qt5_use_modules
-* deployment on Windows
+* qt5 link with module
 
 ```
 cd QtHelloWorld
