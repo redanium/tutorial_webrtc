@@ -21,6 +21,6 @@ Window {
 	onClicked: {
                myButton.buttonClicked.connect(myText.changeText)
                myButton.buttonClicked("Button Clicked")
-            }
-	}
+        }
+  }
 }  
