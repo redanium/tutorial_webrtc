@@ -6,11 +6,11 @@ Window {
   visible: true  
   Rectangle {  
     Text {
-		id: myText
-		text: "Hello World" 
-		function changeText(text) {
-		myText.text = text;
-		}
+	id: myText
+	text: "Hello World" 
+	function changeText(text) {
+	myText.text = text
+	}
     }  
   }
   Button {
