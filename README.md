@@ -1,5 +1,7 @@
 # tutorial_webrtc
 
+Prerequisites can be found here : http://webrtcbydralex.com/index.php/i…
+
 ## JanusQtApp code will be update by the end of the week ##
 
 ### CMake Tutorial ###
