@@ -150,16 +150,16 @@ Window {
       height: parent.height / Math.ceil(Math.sqrt(nb_renderer));
       width:  parent.width  / Math.ceil(Math.sqrt(nb_renderer));
       color: "white"
-      function getRenderer() { } // return _renderer }
+      function getRenderer() { return _renderer }
       // the renderer in this rectangle
-      // CWebRTCStreamRenderer {
-      //   id: _renderer
-      //   anchors{
-      //     fill: parent
-      //     margins: 2
-      //   }
-      //   onFrameUpdated:{ frameCount++; } // Compute FPS Helper
-      // }
+      CWebRTCStreamRenderer {
+        id: _renderer
+        anchors{
+          fill: parent
+          margins: 2
+        }
+        onFrameUpdated:{ frameCount++; } // Compute FPS Helper
+      }
       Timer { // compute FPS
         interval: 1000
         repeat: true
