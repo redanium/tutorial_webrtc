@@ -5,15 +5,10 @@ find_package( libwebrtc REQUIRED )
 find_package( QtWebrtc  REQUIRED )
 
 include_directories("${QtWebrtc_INCLUDE_DIRS}")
-include_directories("${QtWebrtc_INCLUDE_BINARIES}")
 
-
-find_file( QtWebrtcShared NAMES QtWebrtc HINTS ${QtWebrtc_BINARIES})
-find_library( QtWebrtcStatic NAMES QtWebrtc PATHS ${QtWebrtc_LIBRARIES})
-
-message (STATUS "lib ${QtWebrtcShared}")
-message (STATUS "path ${QtWebrtc_BINARIES}")
-
+if ( WIN32 )
+  find_library( QtWebrtcExportLib NAMES QtWebrtc PATHS ${QtWebrtc_LIBRARIES})
+endif()
 
 find_package( Qt5 COMPONENTS Quick Widgets REQUIRED )
 
@@ -33,19 +28,27 @@ if( UNIX AND NOT APPLE )
   target_link_libraries( JanusApp
     Qt5::Widgets
     Qt5::Quick
-    QtWebrtc
+    ${QtWebrtc_LIBRARIES}
     ${WEBRTC_LIBRARIES}
     ${X11_LIBRARIES}
     ${X11_Xcomposite_LIB}
     ${X11_Xdamage_LIB}
     ${X11_Xfixes_LIB}
     )
-else()
+elseif( WIN32 ) # Windows shared library has its own behavior, it has to be done seperately.
   target_link_libraries (JanusApp 
     Qt5::Widgets 
     Qt5::Quick 
-    ${QtWebrtcStatic}
+    ${QtWebrtcExportLib} # Implicit linking
     ${WEBRTC_LIBRARIES} )
+  # Copy the Qt Wrapper dll
+  add_custom_command(
+    TARGET JanusApp POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+            "${QtWebrtc_BINARIES}/QtWebrtc.dll"
+            $<TARGET_FILE_DIR:JanusApp>)
+else()
+  #Apple maybe
 endif()
 
 #-------------------------------------------------------------------------------
