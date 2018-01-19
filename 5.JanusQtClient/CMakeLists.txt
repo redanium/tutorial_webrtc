@@ -1,54 +1,71 @@
 cmake_minimum_required( VERSION 3.2.0 FATAL_ERROR )
 project( JanusApp )
 
+set( SHARED_BUILD True )
+
 find_package( libwebrtc REQUIRED )
 find_package( QtWebrtc  REQUIRED )
 
-include_directories("${QtWebrtc_INCLUDE_DIRS}")
-
-if ( WIN32 )
+# NOTE ALEX: should be done in the UseQtWebrtc.cmake
+if( WIN32 )
   find_library( QtWebrtcExportLib NAMES QtWebrtc PATHS ${QtWebrtc_LIBRARIES})
+else( UNIX )
+  if( SHARED_BUILD )
+    if( QtWebrtc_SHARED_LIB )
+      set( QtWebrtc_LIBRARIES ${QtWebrtc_SHARED_LIB} )
+    else()
+      message( ERROR "You want a shared build, but i don't have QtWebrtc shared lib." )
+    endif()
+  else( SHARED_BUILD )
+    if( QtWebrtc_STATIC_LIB )
+      set( QtWebrtc_LIBRARIES ${QtWebrtc_STATIC_LIB} )
+    else()
+      message( ERROR "You want a static build, but i don't have QtWebrtc static lib." )
+    endif()
+  endif( SHARED_BUILD ) 
 endif()
 
 find_package( Qt5 COMPONENTS Quick Widgets REQUIRED )
 
+# NOTE ALEX: this should not be needed, double check on linux
 if( UNIX AND NOT APPLE )
   find_package( X11 REQUIRED )
   include_directories( ${X11_INCLUDE_DIR} )
 endif()
 
 set( CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DQT_QML_DEBUG" )
-# Not needed on Windows
-#set( CMAKE_AUTOMOC_MOC_OPTIONS "-f${QtWebrtc_MOC_DEPS}" )
+if( NOT WIN32 )
+  set( CMAKE_AUTOMOC_MOC_OPTIONS "-f${QtWebrtc_MOC_DEPS}" )
+endif()
 set( CMAKE_AUTOMOC ON )
 set( CMAKE_AUTORCC ON )
 
 add_executable( JanusApp main.cpp qml.qrc )
-if( UNIX AND NOT APPLE )
-  target_link_libraries( JanusApp
-    Qt5::Widgets
-    Qt5::Quick
-    ${QtWebrtc_LIBRARIES}
-    ${WEBRTC_LIBRARIES}
-    ${X11_LIBRARIES}
-    ${X11_Xcomposite_LIB}
-    ${X11_Xdamage_LIB}
-    ${X11_Xfixes_LIB}
-    )
-elseif( WIN32 ) # Windows shared library has its own behavior, it has to be done seperately.
-  target_link_libraries (JanusApp 
-    Qt5::Widgets 
-    Qt5::Quick 
-    ${QtWebrtcExportLib} # Implicit linking
-    ${WEBRTC_LIBRARIES} )
+target_link_libraries( JanusApp 
+  Qt5::Widgets
+  Qt5::Quick
+  ${WEBRTC_LIBRARIES}
+ )
+if( WIN32 )
+  target_link_libraries( JanusApp ${QtWebrtcExportLib} )
   # Copy the Qt Wrapper dll
   add_custom_command(
     TARGET JanusApp POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
             "${QtWebrtc_BINARIES}/QtWebrtc.dll"
-            $<TARGET_FILE_DIR:JanusApp>)
+            $<TARGET_FILE_DIR:JanusApp>
+  )
+elseif( UNIX )
+  target_link_libraries( JanusApp ${QtWebrtc_LIBRARIES} )
+elseif( UNIX AND NOT APPLE )
+  target_link_libraries( JanusApp
+    ${X11_LIBRARIES}
+    ${X11_Xcomposite_LIB}
+    ${X11_Xdamage_LIB}
+    ${X11_Xfixes_LIB}
+  )
 else()
-  #Apple maybe
+  message( WARNING "You should not be here." )
 endif()
 
 #-------------------------------------------------------------------------------
@@ -83,15 +100,22 @@ if( WIN32 AND NOT CMAKE_CROSSCOMPILING AND NOT CMAKE_VERSION VERSION_LESS 3.1 )
 endif()
 
 enable_testing()
-# --
+include( CTest )
+
 # -- Configurating the test
-add_test (JanusQtClient ${CMAKE_CTEST_COMMAND} 
-    --build-and-test  "${CMAKE_SOURCE_DIR}"
-                      "${CMAKE_BINARY_DIR}"
-    --build-generator ${CMAKE_GENERATOR}
-    --build-makeprogram ${CMAKE_MAKE_PROGRAM}
-    --build-project JanusApp
-    --test-command JanusApp
-    )
-set_property (TEST JanusQtClient
-              PROPERTY ENVIRONMENT Qt5_DIR=${Qt5_DIR})
+# add_test( JanusQtClient ${CMAKE_CTEST_COMMAND} 
+#  --build-and-test  "${CMAKE_SOURCE_DIR}"
+#                    "${CMAKE_BINARY_DIR}"
+#  --build-generator ${CMAKE_GENERATOR}
+#  --build-makeprogram ${CMAKE_MAKE_PROGRAM}
+#  --build-project JanusApp
+#  --test-command JanusApp
+#  )
+# set_property(
+#  TEST JanusQtClient
+#  PROPERTY ENVIRONMENT Qt5_DIR=${Qt5_DIR}
+#  )
+# target_link_libraries( JanusApp Qt5::Widgets Qt5::Quick ${QtWebrtc_LIBRARIES} )
+
+add_test( TestJanusApp JanusApp )
+
