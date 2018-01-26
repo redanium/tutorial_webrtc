@@ -6,10 +6,25 @@ set( BUILD_SHARED_LIBS True )
 find_package( libwebrtc REQUIRED )
 find_package( QtWebrtc  REQUIRED )
 
-# NOTE ALEX: should be done in the UseQtWebrtc.cmake
 if( WIN32 )
-  find_library( QtWebrtcExportLib NAMES QtWebrtc PATHS ${QtWebrtc_LIBRARIES})
-
+  if( BUILD_SHARED_LIBS )
+    if( QtWebrtc_EXPORT_LIB )
+      set( QtWebrtc_EXPORTLIB ${QtWebrtc_EXPORT_LIB} )
+    else()
+      message( ERROR "You want a shared build, but I don't have QtWebrtc Export lib." )
+    endif()
+    if( QtWebrtc_SHARED_LIB )
+      set( QtWebrtc_LIBRARIES ${QtWebrtc_SHARED_LIB} )
+    else()
+      message( ERROR "You want a shared build, but I don't have QtWebrtc dll.")
+    endif()
+  else()
+    if( QtWebrtc_STATIC_LIB )
+      set( QtWebrtc_LIBRARIES ${QtWebrtc_STATIC_LIB} )
+    else()
+      message( ERROR "You want a static build, but I don't have QtWebrtc static lib." )    
+    endif()
+  endif()
 else( UNIX )
   message( STATUS ${QtWebrtc_SHARED_LIB} )
   message( STATUS ${QtWebrtc_STATIC_LIB} )
@@ -50,12 +65,12 @@ target_link_libraries( JanusApp
   ${WEBRTC_LIBRARIES}
  )
 if( WIN32 )
-  target_link_libraries( JanusApp ${QtWebrtcExportLib} )
+  target_link_libraries( JanusApp ${QtWebrtc_EXPORTLIB} )
   # Copy the Qt Wrapper dll
   add_custom_command(
     TARGET JanusApp POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
-            "${QtWebrtc_BINARIES}/QtWebrtc.dll"
+            "${QtWebrtc_SHARED_LIB}"
             $<TARGET_FILE_DIR:JanusApp>
   )
 elseif( UNIX )
@@ -82,11 +97,8 @@ if( WIN32 AND NOT CMAKE_CROSSCOMPILING AND NOT CMAKE_VERSION VERSION_LESS 3.1 )
   get_target_property (QT_QMAKE_EXECUTABLE Qt5::qmake IMPORTED_LOCATION)
 
   get_filename_component (QT_BIN_DIR "${QT_QMAKE_EXECUTABLE}" DIRECTORY)
-  message (STATUS "${QT_QMAKE_EXECUTABLE}")
   # --- locate the windeployqt tool
   find_program( QT_WINDEPLOYQT_EXECUTABLE windeployqt HINTS "${QT_BIN_DIR}" )
-  message (STATUS "${QT_BIN_DIR}")
-  message (STATUS "${QT_WINDEPLOYQT_EXECUTABLE} ")
   if( CMAKE_BUILD_TYPE STREQUAL Debug )
     list( APPEND JanusApp_WINDEPLOYQT_FLAGS --debug )
   else()
@@ -105,20 +117,4 @@ endif()
 enable_testing()
 include( CTest )
 
-# -- Configurating the test
-# add_test( JanusQtClient ${CMAKE_CTEST_COMMAND} 
-#  --build-and-test  "${CMAKE_SOURCE_DIR}"
-#                    "${CMAKE_BINARY_DIR}"
-#  --build-generator ${CMAKE_GENERATOR}
-#  --build-makeprogram ${CMAKE_MAKE_PROGRAM}
-#  --build-project JanusApp
-#  --test-command JanusApp
-#  )
-# set_property(
-#  TEST JanusQtClient
-#  PROPERTY ENVIRONMENT Qt5_DIR=${Qt5_DIR}
-#  )
-# target_link_libraries( JanusApp Qt5::Widgets Qt5::Quick ${QtWebrtc_LIBRARIES} )
-
 add_test( TestJanusApp JanusApp )
-
