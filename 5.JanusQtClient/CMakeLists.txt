@@ -73,15 +73,19 @@ if( WIN32 )
             "${QtWebrtc_SHARED_LIB}"
             $<TARGET_FILE_DIR:JanusApp>
   )
-elseif( UNIX )
-  target_link_libraries( JanusApp ${QtWebrtc_LIBRARIES} )
 elseif( UNIX AND NOT APPLE )
+  # Linux
   target_link_libraries( JanusApp
+    ${QtWebrtc_STATIC_LIB}
+    ${WEBRTC_LIBRARIES}
     ${X11_LIBRARIES}
     ${X11_Xcomposite_LIB}
     ${X11_Xdamage_LIB}
     ${X11_Xfixes_LIB}
   )
+elseif( UNIX )
+  # Mac
+  target_link_libraries( JanusApp ${QtWebrtc_LIBRARIES} )
 else()
   message( WARNING "You should not be here." )
 endif()
