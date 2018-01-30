@@ -1,6 +1,6 @@
 # tutorial_webrtc
 
-Prerequisites can be found here : http://webrtcbydralex.com/index.php/i…
+Prerequisites can be found [here](http://webrtcbydralex.com/index.php/iit-rtc-2017-tutorial/)
 
 ## JanusQtApp code will be update by the end of the week ##
 
